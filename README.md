@@ -1,11 +1,10 @@
 # coco_mcu
 
 ## Description
-Proposal for Visual Wake Words Challenge @ CVPR 2019
-[https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub]
+Submission to the [Visual Wake Words Challenge](https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub) @ CVPR'19.
 
 ## Contributions
-* Equally contributed: Javier Fernández Marqués and Fernando García Redondo
+* Equally contributed: Javier Fernández-Marqués and Fernando García-Redondo
 * Support: Shidhartha Das and Paul Whatmough
 
 ## Contact
