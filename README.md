@@ -9,18 +9,17 @@ Javier Fernández Marques, Fernando García Redondo proposal for Visual Wake Wor
 fernando.garciaredondo@arm.com, Javier.Fernandez-Marques@arm.com
 
 ## Description
-Proposal for Visual Wake Words Challenge@CVPR 2019
-[https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub]
+Proposal for [Visual Wake Words Challenge@CVPR-2019](https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub)
 
 ## Accuracy over validation dataset
 The network achieves a best accuracy on the validation dataset of 90.2%.
 
 ## Network Architecture.
 ### Related work
-The scheleton of the developed network is based on Google's MobilenetV3 (https://arxiv.org/abs/1905.02244), taking the basic bottleneck layer implementation from Bisonai (https://github.com/Bisonai/mobilenetv3-tensorflow) as a basic CNN layer.
+The scheleton of the developed network is based on [Google's MobilenetV3](https://arxiv.org/abs/1905.02244), taking the basic bottleneck layer implementation from [Bisonai](https://github.com/Bisonai/mobilenetv3-tensorflow) as a basic CNN layer.
 
 ### Proposed network
-The network architecture is described in the file ´mb_att.py´, and depicted in the following picture:
+The network architecture is described in `mb_att.py`, and depicted in the following picture:
 
 ![NN](https://github.com/fgr1986/arm_coco/blob/master/arm_coco.png)
 
@@ -39,7 +38,7 @@ TF Profiler reports total number of flops 1983336
 * The network is quantized using TF (v1.13) quantization functions [https://github.com/tensorflow/tensorflow/blob/r1.13/tensorflow/contrib/quantize/python/quantize_graph.py]
 * Activations are quantized using 8b
 * Weights are quantized using 2b
-* The quantization delay is non-zero (see  ´mb_att.py´).
+* The quantization delay is non-zero (see  `mb_att.py`).
 
 #### ROM Size
 * The network is composed of a total of 1,000,914 parameters
@@ -70,11 +69,11 @@ The proposed NN customizes the recently presented mobilenet_v3, introducing:
 * Instead of the traditional CNN approach, and giving the varied images dataset (size, etc), we try to keep as much resolution as possible as we deepen into the network.
 
 #### Data augmentation
-We have applied data augmentation during training to avoid overfiting. ´input_data.py´ file describe the mechanishms, wich include random cropping, hue and brightness variation, rotations, etc.
+We have applied data augmentation during training to avoid overfiting. `input_data.py` describes the mechanishms, wich include random cropping, hue and brightness variation, rotations, etc.
 
 #### Regularization and other anti-overfiting mechanishms
 We used L2 regularization together with dropout layers. Additionally, 2b weights quantization helps reducing overfiting effects
 
 #### Learning rate scheduling
-A custom learning rate scheduler has been used (see  ´mb_att.py´) so both learning and quantization caused oscilations are controlled.
+A custom learning rate scheduler has been used (see  `mb_att.py`) so both learning and quantization caused oscilations are controlled.
 
