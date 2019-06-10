@@ -51,9 +51,16 @@ Always taking in mind how MCU NN libs (see CMSIS: https://github.com/ARM-softwar
 * Let ´h(t)=g(f(t))´, being ´t´ not required for later operations, after ´f(t)´ has been computed, the memory space previously occupied by ´t´ can be freed and reasigned.
 * Let ´h(t) = y(g(t), f(t))´ a graph section with two paths or branches, dependent on ´t´, we compute first one branch i.e. 'g(t)´, then ´f(t)´, so ´t´ no longer requires to be hold in memory, and its memory space reallocated to compute ´y()´.
 
+
 Taking into account the previous considerations, and given the architecture defined above (described in detail in ´mb_att.py´), the RAM memory peack takes place in the nodes:
-* Input conv: 256*256*3 + 86*86*8 = 249.8KB
-* Bneck0
+* Input conv: 256x256x3 + 86x86x8 = 249.8KB
+* Bneck0: 86x86x8 [shared input] + 86x86x16 = 173.34KB. After computation buffer of 86x86x16
+* Att0: Max peak with 86x86x16 [bneck0 out] + 86x86x8 [shared input that can be discarted after first max_pool] + 43x43x8 = 218KB. After first pooling the peak is: 86x86x16 + 43x43x8 + 22x22x(16+16+32) = 164.1KB. After computation buffer of 22x22x16
+* Pointwise Mult Att0*Bneck0 = [attention is upscaled] 2x86x86x16 = 231.12KB
+
+* Att1: Max peak with 86x86x8 [shared input that can be discarted after first max_pool] + 43x43x8 = 218KB. After first pooling the peak is: 86x86x16 + 43x43x16 + 22x22x(16+16+32) = 178.9KB. After computation buffer of 22x22x16
+* Bneck1: 86x86x16 [shared input] + 86x86x16 + 22x22x16 [att1 output] = 238.7KB. After computation buffer of 86x86x16
+* Mult Att1*Bneck1 =  [attention is upscaled] 2x86x86x16 = 231.12KB
 
 ### Key points in NN design and training
 #### General description
