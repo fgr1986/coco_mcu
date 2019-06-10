@@ -12,7 +12,7 @@ Submission to the [Visual Wake Words Challenge](https://docs.google.com/document
 fernando.garciaredondo@arm.com and javier.fernandez-marques@arm.com
 
 ## Accuracy over validation dataset
-The network achieves a best accuracy on the validation dataset of 90.2%.
+The network achieves a best accuracy on the validation dataset of 90.2%. :exclamation:
 
 ## Network Architecture.
 ### Related work
@@ -30,7 +30,7 @@ The attention and bneck layers are defined as follows:
 ### Key points in NN interpretation for MCU deployement
 
 #### Total operations
-TF Profiler reports total number of flops 1983336
+TF Profiler reports total number of flops 1983336 :exclamation:
 
 #### Quantization
 * The network is quantized using TF (v1.13) [quantization functions](https://github.com/tensorflow/tensorflow/blob/r1.13/tensorflow/contrib/quantize/python/quantize_graph.py)
