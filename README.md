@@ -45,7 +45,7 @@ TF Profiler reports total number of flops 1983336
 Always taking in mind how MCU NN libs (see CMSIS: https://github.com/ARM-software/CMSIS_5)
 * Point-wise additions and multiplications are considered in-place. Should a custom operation `f(t)` be performed over the tensor `t`, a single uint8 can hold temporarily the value `aux = f(t_i)`, later replacing the memory space where `t_i` was in.
 * Let `h(t)=g(f(t))`, being `t` not required for later operations, after `f(t)` has been computed, the memory space previously occupied by `t` can be freed and reasigned.
-* Let `h(t) = y(g(t), f(t))` a graph section with two paths or branches, dependent on `t`, we compute first one branch i.e. `g(t)`, then `f(t)`, so ´t´ no longer requires to be hold in memory, and its memory space reallocated to compute `y()`.
+* Let `h(t) = y(g(t), f(t))` a graph section with two paths or branches, dependent on `t`, we compute first one branch i.e. `g(t)`, then `f(t)`, so `t` no longer requires to be hold in memory, and its memory space reallocated to compute `y()`.
 
 
 Taking into account the previous considerations, and given the architecture defined above (described in detail in ´mb_att.py´), the RAM memory peack takes place in the nodes:
