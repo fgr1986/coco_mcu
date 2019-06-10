@@ -37,7 +37,7 @@ TF Profiler reports total number of flops 1983336 :exclamation:
 * The network is quantized using TF (v1.13) [quantization functions](https://github.com/tensorflow/tensorflow/blob/r1.13/tensorflow/contrib/quantize/python/quantize_graph.py)
 * Activations are quantized using 8 bits
 * Weights are quantized using 2 bits
-* The quantization delay is non-zero (see `mb_att.py`).
+* The quantization delay is non-zero. Quantization takes place at epoch 10 (batch size=6). For more info see `mb_att.py`.
 
 #### ROM Size
 * The network is composed of a total of 1,000,914 parameters
@@ -78,6 +78,7 @@ Taking into account the previous considerations, and given the architecture defi
 ### Key points in NN design and training
 #### General description
 The proposed NN customizes the recently presented mobilenet_v3, introducing:
+* 2b weights allows 4x number of weights in the final layers.
 * Attention mechanishms in the first layers so, giving the variety of input images, the features extraction can focus on interesting regions.
 * Deep residual connections to avoid gradient vanishing.
 * Instead of the traditional CNN approach, and giving the varied images dataset (size, etc), we try to keep as much resolution as possible as we deepen into the network.
