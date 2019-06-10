@@ -18,7 +18,7 @@ The scheleton of the developed network is based on Google's MobilenetV3 (https:/
 ### Proposed network
 The network architecture is described in the file ´mb_att.py´, and depicted in the following picture:
 
-![NN](https://raw.githubusercontent.com/fgr1986/arm_coco/master/arm_coco.svg)
+![NN](https://github.com/fgr1986/arm_coco/blob/master/arm_coco.png)
 
 ### Key points
 * The network is quantized to use
