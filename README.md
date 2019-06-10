@@ -1,5 +1,9 @@
 # coco_mcu
-Javier Fernández Marques &amp; Fernando García Redondo proposal for Visual Wake Words Challenge@CVPR 2019
+Javier Fernández Marques, Fernando García Redondo proposal for Visual Wake Words Challenge@CVPR 2019
+
+## Contributions
+Equally contributed: Javier Fernández Marques, Fernando García Redondo 
+Support: Sid Das and Paul Whatmough
 
 ## Contact
 fernando.garciaredondo@arm.com, Javier.Fernandez-Marques@arm.com
@@ -20,6 +24,25 @@ The network architecture is described in the file ´mb_att.py´, and depicted in
 
 ![NN](https://github.com/fgr1986/arm_coco/blob/master/arm_coco.png)
 
-### Key points
-* The network is quantized to use
-### MCU deploying considerations
+The attention and bneck layers are defined as follows:
+
+![NN](https://github.com/fgr1986/arm_coco/blob/master/bneck_mobilenet_v3.png)
+
+Note that bneck layers follow the description in https://arxiv.org/abs/1905.02244
+
+### Key points in NN interpretation for MCU deployement
+#### Quantization
+* The network is quantized using TF (v1.13) quantization functions [https://github.com/tensorflow/tensorflow/blob/r1.13/tensorflow/contrib/quantize/python/quantize_graph.py]
+* Activations are quantized using 8b
+* Weights are quantized using 2b
+* The quantization delay is non-zero (see  ´mb_att.py´).
+
+#### ROM Size
+* The network is composed of a total of 1,000,914 parameters
+* Each parameter uses 2b in the ROM, giving a total of 244.4KB
+
+#### RAM Usage
+Always taking in mind how MCU NN libs (see CMSIS: https://github.com/ARM-software/CMSIS_5)
+* Point-wise additions and multiplications are considered in-place. Should a custom operation ´f(t)´ be performed over the tensor ´t´, a single uint8 can hold temporarily the value ´aux = f(t_i)´, later replacing the memory space where ´t_i´ was in.
+* Let ´h(t)=g(f(t))´, being ´t´ not required for later operations, after ´f(t)´ has been computed, the memory space previously occupied by ´t´ can be freed and reasigned.
+* Let ´h(t) = y(g(t), f(t))´ a graph section with two paths or branches, dependent on ´t´, we compute first one branch i.e. 'g(t)´, then ´f(t)´, so ´t´ no longer requires to be hold in memory, and its memory space reallocated to compute ´y()´.
