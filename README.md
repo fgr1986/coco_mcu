@@ -31,6 +31,10 @@ The attention and bneck layers are defined as follows:
 Note that bneck layers follow the description in https://arxiv.org/abs/1905.02244
 
 ### Key points in NN interpretation for MCU deployement
+
+#### Total operations
+TF Profiler reports total number of flops 1983336
+
 #### Quantization
 * The network is quantized using TF (v1.13) quantization functions [https://github.com/tensorflow/tensorflow/blob/r1.13/tensorflow/contrib/quantize/python/quantize_graph.py]
 * Activations are quantized using 8b
