@@ -6,6 +6,7 @@ Submission to the [Visual Wake Words Challenge](https://docs.google.com/document
 ## Contributions
 * Equally contributed: Javier Fernández-Marqués and Fernando García-Redondo
 * Support: Shidhartha Das and Paul Whatmough
+* Advise: Ramón Matas
 
 ## Contact
 fernando.garciaredondo@arm.com and javier.fernandez-marques@arm.com
