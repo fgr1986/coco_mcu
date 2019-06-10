@@ -48,7 +48,7 @@ During the development of the proposed model, we had in mind how MCU NN libs (se
 * Let `h(t) = y(g(t), f(t))` a graph section with two paths or branches, dependent on `t`, we compute first one branch i.e. `g(t)`, then `f(t)`, so `t` no longer requires to be hold in memory, and its memory space reallocated to compute `y()`.
 
 
-Taking into account the previous considerations, and given the architecture defined above (described in detail in ´mb_att.py´), the RAM memory peack takes place in the nodes:
+Taking into account the previous considerations, and given the architecture defined above (described in detail in `mb_att.py`), the RAM memory peack takes place in the nodes:
 * Input conv: 256x256x3 + 86x86x8 = 249.8KB
 * Bneck0: 86x86x8 [shared input] + 86x86x16 = 173.34KB. After computation buffer of 86x86x16
 * Att0: Max peak with 86x86x16 [bneck0 out] + 86x86x8 [shared input that can be discarted after first max_pool] + 43x43x8 = 218KB. After first pooling the peak is: 86x86x16 + 43x43x8 + 22x22x(16+16+32) = 164.1KB. After computation buffer of 22x22x16
