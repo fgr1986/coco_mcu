@@ -67,8 +67,8 @@ print('_TF_RECORDS_FOLDER is harcoded')
 LABELS_FILENAME = 'labels.txt'
 INPUT_IMAGE_SIZE = [IMG_SIZE, IMG_SIZE, 3]
 
-TRN_BATCH_SIZE = 32
-VAL_BATCH_SIZE = 32
+TRN_BATCH_SIZE = 64
+VAL_BATCH_SIZE = 50
 
 features = {
     'image/encoded':
@@ -175,8 +175,8 @@ def _parse_function_trn(example_proto):
         parsed_features["image/encoded"], parsed_features["image/format"])
 
     image_resized = tf.image.resize_images(image_decoded,
-                                           [int(1.5*INPUT_IMAGE_SIZE[0]),
-                                            int(1.5*INPUT_IMAGE_SIZE[1])])
+                                           [int(1.25*INPUT_IMAGE_SIZE[0]),
+                                            int(1.25*INPUT_IMAGE_SIZE[1])])
     label = tf.cast(parsed_features['image/class/label'],
                     dtype=tf.int32)
 
