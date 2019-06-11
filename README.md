@@ -17,7 +17,7 @@ On the generated validation set, the proposed network achieves a best accuracy v
 
 ## Network Architecture.
 ### Related work
-The scheleton of the developed network is based on [Google's MobilenetV3](https://arxiv.org/abs/1905.02244), taking the basic bottleneck layer implementation from [Bisonai](https://github.com/Bisonai/mobilenetv3-tensorflow) as a basic CNN layer.
+The skeleton of the developed network is based on [Google's MobilenetV3](https://arxiv.org/abs/1905.02244), taking the basic bottleneck layer implementation from [Bisonai](https://github.com/Bisonai/mobilenetv3-tensorflow) as a basic CNN layer.
 
 ### Proposed network
 The network architecture is described in the file `mb_att.py`, and depicted in the following picture:
