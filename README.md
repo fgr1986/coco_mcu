@@ -1,7 +1,7 @@
 # coco_mcu
 
 ## Description
-Submission to the [Visual Wake Words Challenge](https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub) @ CVPR'19.
+Submission to the [Visual Wake Words Challenge](https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub) @ CVPR'19. All the code developed by the contributors (see contributors section) is released under MIT license.
 
 ## Contributions
 * Equally contributed: Javier Fernández-Marqués and Fernando García-Redondo
@@ -84,17 +84,17 @@ Taking into account the previous considerations, and given the architecture defi
 ### Key points in NN design and training
 #### General description
 The proposed NN customizes the recently presented mobilenet_v3, introducing:
-* 2-bit weights allows 4x number of weights in the final layers.
-* Attention mechanishms in the first layers so, giving the variety of input images, the features extraction can focus on interesting regions.
+* 2-bit weights allow 4x number of weights in the final layers.
+* Attention mechanisms  in the first layers so, giving the variety of input images, the features extraction can focus on interesting regions.
 * Deep residual connections to avoid gradient vanishing.
 * Instead of the traditional CNN approach, and giving the varied images dataset (size, etc), we try to keep as much resolution as possible as we deepen into the network.
 
 #### Data augmentation
-We have applied data augmentation during training to avoid overfiting. `input_data.py` file describe the mechanishms, wich include random cropping, hue and brightness variation, rotations, etc.
+We have applied data augmentation during training to avoid overfitting. `input_data.py` file describes the mechanisms, wich includes random cropping, hue and brightness variation, rotations, etc.
 
-#### Regularization and other anti-overfiting mechanishms
-We used L2 regularization together with dropout layers. Additionally, 2b weights quantization helps reducing overfiting effects
+#### Regularization and other anti-overfitting mechanishms
+We used L2 regularization together with dropout layers. Additionally, 2b weights quantization helps reducing overfitting effects
 
 #### Learning rate scheduling
-A custom learning rate scheduler has been used (see `mb_att.py`) so both learning and quantization caused oscilations are controlled.
+A custom learning rate scheduler has been used (see `mb_att.py`) so both learning and quantization caused oscillations are controlled.
 
