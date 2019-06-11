@@ -37,13 +37,13 @@ The attention and bneck layers are defined as follows:
 ### Key points in NN interpretation for MCU deployement
 
 #### Total operations
-TF Profiler reports total number of flops 1983338.
+TF Profiler reports total number of flops 1983338, which is called at the begining of the training. See `get_flops()` method in `keras_q_model.py`.
 
 #### Quantization
 * The network is quantized using TF (v1.13) [quantization functions](https://github.com/tensorflow/tensorflow/blob/r1.13/tensorflow/contrib/quantize/python/quantize_graph.py)
 * Activations are quantized using 8 bits.
 * Weights are quantized using 2 bits.
-* The quantization delay is non-zero. Quantization takes place at epoch 10 (batch size=6). For more info see `mb_att.py`.
+* The quantization delay is non-zero as it gets applied after 10K batches (approx. at epoch 10 for a batch size of 64). For more info see `mb_att.py`.
 
 #### ROM Size
 * The network is composed of a total of 1,000,914 parameters.
