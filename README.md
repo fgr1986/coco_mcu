@@ -14,12 +14,12 @@ fernando.garciaredondo@arm.com and javier.fernandez-marques@arm.com
 ## Performance Metrics Summary
 Following the instructions in [Visual Wake Words Challenge](https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub), we generated the TFrecords using the script  ‘build_visualwakewords_data.py’ from [slim/dataset](https://github.com/tensorflow/models/tree/master/research/slim/datasets) lib.
 
-* Validation accuracy 90%. :exclamation:
+* Validation accuracy: 89.88% (@ epoch 90)
 * Model size: 244.4KB
 * Peak memory usage: 249 KB
 * MACs for inference: 1.98 Million OPs
 
-In the following subsection we provide a description of our model architecture and further information on how the parameters above were obtained.
+In the following subsection we provide a description of our model architecture and further information on how the parameters above were obtained. Our model is still training and we will report the final validation once the 140 epochs are completed.
 
 ## Network Architecture.
 ### Related work
