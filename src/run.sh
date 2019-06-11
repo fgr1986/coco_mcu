@@ -22,4 +22,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-python mb_att.py --train --learning_rate 1e-3 --do_step_decay --exp_folder 'standard_with_aument_fix' --GPU 0 --epochs 140
+python mb_att.py --train --learning_rate 1e-3 --do_step_decay --exp_folder 'standard_with_aument' --GPU 0 --epochs 140
