@@ -37,7 +37,7 @@ The attention and bneck layers are defined as follows:
 ### Key points in NN interpretation for MCU deployement
 
 #### Total operations
-TF Profiler reports total number of flops 1983338, which is called at the begining of the training. See `get_flops()` method in `keras_q_model.py`.
+TF Profiler reports total number of flops 1983338, which is called at the beginning of the training. See `get_flops()` method in `keras_q_model.py`.
 
 #### Quantization
 * The network is quantized using TF (v1.13) [quantization functions](https://github.com/tensorflow/tensorflow/blob/r1.13/tensorflow/contrib/quantize/python/quantize_graph.py)
