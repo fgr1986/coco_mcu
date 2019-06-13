@@ -308,7 +308,11 @@ def get_report_dataset(minival_ids_path,
     # aux function
     def _parse_minival(filename):
         image_string = tf.read_file(filename)
-        return tf.image.decode_jpeg(image_string)
+        image_decoded = tf.image.decode_jpeg(image_string)
+
+        return tf.image.resize_images(image_decoded,
+                                      [int(INPUT_IMAGE_SIZE[0]),
+                                       int(INPUT_IMAGE_SIZE[1])])
 
     # ids
     ids = np.genfromtxt(minival_ids_path)
@@ -328,7 +332,7 @@ def get_report_dataset(minival_ids_path,
         print('found: ', image_id)
         tmp_an = all_annotations[str(image_id)][0]
         file_names[found_idx] = os.path.join(minival_img_folder_path,
-                                     tmp_image['file_name'])
+                                             tmp_image['file_name'])
         labels[found_idx] = tmp_an['label']
         found_idx += 1
 
