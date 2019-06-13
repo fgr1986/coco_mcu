@@ -306,13 +306,16 @@ def get_report_dataset(minival_ids_path,
                        repeat_epochs=1):
 
     # aux function
-    def _parse_minival(filename):
+    def _parse_minival(filename, label):
         image_string = tf.read_file(filename)
         image_decoded = tf.image.decode_jpeg(image_string)
+        label = tf.cast(tf.keras.backend.one_hot(label,
+                                                 _NUM_CLASSES),
+                                                 dtype=tf.float32)
 
         return tf.image.resize_images(image_decoded,
                                       [int(INPUT_IMAGE_SIZE[0]),
-                                       int(INPUT_IMAGE_SIZE[1])])
+                                       int(INPUT_IMAGE_SIZE[1])]), label
 
     # ids
     ids = np.genfromtxt(minival_ids_path)
@@ -336,11 +339,8 @@ def get_report_dataset(minival_ids_path,
         labels[found_idx] = tmp_an['label']
         found_idx += 1
 
-    files_dataset = tf.data.Dataset.from_tensor_slices(file_names)
-    labels_dataset = tf.data.Dataset.from_tensor_slices(labels)
-    images_dataset = files_dataset.map(_parse_minival)
-
-    dataset = tf.data.Dataset.zip((images_dataset, labels_dataset))
+    pre_dataset = tf.data.Dataset.from_tensor_slices((file_names, labels))
+    dataset = pre_dataset.map(_parse_minival)
 
     # data normalization
     dataset = dataset.map(_data_normalization)
