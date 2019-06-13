@@ -26,6 +26,8 @@ import os
 import tensorflow as tf
 
 import argparse
+import numpy as np
+import json
 
 from tensorflow.python.platform import gfile
 from tensorflow.python.ops import math_ops
@@ -35,6 +37,7 @@ from tensorflow.python.ops import image_ops
 
 slim = tf.contrib.slim
 
+_VAL_MIN_IDS_FILE = './mscoco_minival_ids.txt'
 _FILE_PATTERN = '%s.record-*'
 
 _NUM_CLASSES = 2
@@ -287,6 +290,59 @@ def get_dataset(train=True,
         dataset = dataset.repeat(repeat_epochs).batch(
             VAL_BATCH_SIZE).prefetch(2)
         print('batch_size val: ', VAL_BATCH_SIZE)
+    print('dataset: ', dataset)
+
+    return dataset
+
+
+def _get_minival_name(id, folder):
+    return folder + '/COCO_val_2014_' + id + '.jpg'
+
+
+def get_report_dataset(minival_ids_path,
+                       minival_json_path,
+                       minival_img_folder_path,
+                       do_one_hot=True,
+                       repeat_epochs=1):
+
+    # aux function
+    def _parse_minival(filename):
+        image_string = tf.read_file(filename)
+        return tf.image.decode_jpeg(image_string)
+
+    # ids
+    ids = np.genfromtxt(minival_ids_path)
+    # json
+    with open(minival_json_path, "r") as f:
+        json_data = json.load(f)
+    labels = [None] * ids.shape[0]
+    file_names = [None] * ids.shape[0]
+
+    all_annotations = json_data['annotations']
+    all_images = json_data['images']
+    found_idx = 0
+    for tmp_image in all_images:
+        image_id = int(tmp_image['id'])
+        if image_id not in ids:
+            continue
+        print('found: ', image_id)
+        tmp_an = all_annotations[str(image_id)][0]
+        file_names[found_idx] = os.path.join(minival_img_folder_path,
+                                     tmp_image['file_name'])
+        labels[found_idx] = tmp_an['label']
+        found_idx += 1
+
+    files_dataset = tf.data.Dataset.from_tensor_slices(file_names)
+    labels_dataset = tf.data.Dataset.from_tensor_slices(labels)
+    images_dataset = files_dataset.map(_parse_minival)
+
+    dataset = tf.data.Dataset.zip((images_dataset, labels_dataset))
+
+    # data normalization
+    dataset = dataset.map(_data_normalization)
+    dataset = dataset.repeat(repeat_epochs).batch(
+        VAL_BATCH_SIZE).prefetch(2)
+    print('batch_size val: ', VAL_BATCH_SIZE)
     print('dataset: ', dataset)
 
     return dataset
