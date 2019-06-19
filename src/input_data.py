@@ -46,7 +46,9 @@ IMG_SIZE = 256
 _SPLITS_TO_SIZES = {
     'trn': 82783,
     'val': 40504,
+    'mini_val': 8059
 }
+
 
 _ITEMS_TO_DESCRIPTIONS = {
     'image': 'A color image of varying height and width.',
@@ -63,7 +65,8 @@ def str2bool(v):
     return v.lower() in ("True", "true", "1")
 
 
-_TF_RECORDS_FOLDER = 'path/to/processed/dataset'
+# _TF_RECORDS_FOLDER = '/home/javfer01/testMerged'
+_TF_RECORDS_FOLDER = '/home/fergar01/local_workspace/coco_mcu/tfrecords_dataset'
 print('_TF_RECORDS_FOLDER is harcoded')
 
 # labels file
@@ -332,7 +335,7 @@ def get_report_dataset(minival_ids_path,
         image_id = int(tmp_image['id'])
         if image_id not in ids:
             continue
-        print('found: ', image_id)
+        #print('found: ', image_id)
         tmp_an = all_annotations[str(image_id)][0]
         file_names[found_idx] = os.path.join(minival_img_folder_path,
                                              tmp_image['file_name'])
