@@ -29,7 +29,7 @@ The skeleton of the developed network is based on [Google's MobilenetV3](https:/
 ### Proposed network
 The network architecture is described in the file `mb_att.py`, and depicted in the following picture:
 
-![NN](https://github.com/fgr1986/arm_coco/blob/fergar01/arm_coco_small.png)
+![NN](https://github.com/fgr1986/arm_coco/blob/master/arm_coco_small.png)
 
 The attention and bneck layers are defined as follows:
 
