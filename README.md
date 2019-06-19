@@ -14,10 +14,11 @@ fernando.garciaredondo@arm.com and javier.fernandez-marques@arm.com
 ## Performance Metrics Summary
 Following the instructions in [Visual Wake Words Challenge](https://docs.google.com/document/u/2/d/e/2PACX-1vStp3uPhxJB0YTwL4T__Q5xjclmrj6KRs55xtMJrCyi82GoyHDp2X0KdhoYcyjEzKe4v75WBqPObdkP/pub), we generated the TFrecords using the script  ‘build_visualwakewords_data.py’ from [slim/dataset](https://github.com/tensorflow/models/tree/master/research/slim/datasets) lib.
 
-* Validation accuracy: 89.88% (@ epoch 90)
+* Best Validation accuracy: 88.85%
+* Validation on minival_dataset: 87.96%
 * Model size: 244.4KB
 * Peak memory usage: 249 KB
-* MACs for inference: 1.98 Million OPs
+* MACs for inference: 56.8 Million OPs
 
 In the following subsection we provide a description of our model architecture and further information on how the parameters above were obtained. Our model is still training and we will report the final validation once the 140 epochs are completed.
 
@@ -28,7 +29,7 @@ The skeleton of the developed network is based on [Google's MobilenetV3](https:/
 ### Proposed network
 The network architecture is described in the file `mb_att.py`, and depicted in the following picture:
 
-![NN](https://github.com/fgr1986/arm_coco/blob/master/arm_coco.png)
+![NN](https://github.com/fgr1986/arm_coco/blob/master/arm_coco_small.png)
 
 The attention and bneck layers are defined as follows:
 
@@ -68,16 +69,12 @@ Taking into account the previous considerations, and given the architecture defi
 
 * Residual is stored: 22x22x16 = 7.5KB
 
-* Bneck2: Peak with 86x86x16 + res + 43x43x32 = 180.9KB, output 43x43x24
-* Bneck3: Peak with 43x43x24 + res + 43x43x64 = 166.4KB, output 43x43x32
-* Bneck4: Peak with 43x43x32 + res + 22x22x256 = 186.34KB, output 22x22x128
-* Bneck5: Peak with 22x22x128 + res + 22x22x128 [res] + 22x22x256 = 249.56KB, output 22x22x128
-* Bneck6: Peak with 22x22x128 + res + 22x22x128 [res] + 22x22x256 = 249.56KB, output 22x22x128 
-* Bneck7: Peak with 22x22x128 + res + 22x22x128 = 128.56KB, output 22x22x64
-* Bneck8: Peak with 22x22x64 + res + 22x22x64 = 68KB, output 22x22x32, upscaling to 43x43x32
-* Bneck9: Peak with 43x43x32 + res + 43x43x32 = 123.1KB, output 43x43x16
-* Add: Peak with 43x43x16x2 = 57.8KB, output 43x43x16, avg pool to 10x10x16
-* Last Layer: Peak with 10x10x(16 + 512 + 1200) = 167.2KB
+* Bneck2: Peak with 86x86x16 + 43x43x32 = 180.9KB, output 43x43x24
+* Bneck3: Peak with 43x43x24 + 22x2x64  + 22x22x32= 89KB, output 22x22x32
+* Bneck4: Peak with 22x22x32 + 11x11x(256 + 128) = 60.5KB, output 11x11x128
+* Bneck5: Peak with 11x11x128 + 6x6x128 [res] + 6x6x256 = 60.5KB, output 6x6x128
+* Bneck6: Peak with 6x6x128 + 6x6x128 [res] + 6x6x256 = 18KB, output 6x6x128 
+* LastStage Layer: Peak with 6x6x(128 + 512 + 1200) = 64.7KB
 
 **Peak use: 249KB**
 
@@ -86,7 +83,6 @@ Taking into account the previous considerations, and given the architecture defi
 The proposed NN customizes the recently presented mobilenet_v3, introducing:
 * 2-bit weights allow 4x number of weights in the final layers.
 * Attention mechanisms  in the first layers so, giving the variety of input images, the features extraction can focus on interesting regions.
-* Deep residual connections to avoid gradient vanishing.
 * Instead of the traditional CNN approach, and giving the varied images dataset (size, etc), we try to keep as much resolution as possible as we deepen into the network.
 
 #### Data augmentation
