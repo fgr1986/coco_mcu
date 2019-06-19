@@ -47,8 +47,8 @@ TF Profiler reports total number of flops 1983338, which is called at the beginn
 * The quantization delay is non-zero as it gets applied after 10K batches (approx. at epoch 10 for a batch size of 64). For more info see `mb_att.py`.
 
 #### ROM Size
-* The network is composed of a total of 1,000,914 parameters.
-* Each parameter uses 2-bits in ROM, giving a total of 244.4KB.
+* The network is composed of a total of 1,013,554 parameters.
+* Each parameter uses 2-bits in ROM, giving a total of 247.5KB.
 
 #### RAM Usage
 During the development of the proposed model, we had in mind how Neural Networks libraries for MCUs (see Arm's [CMSIS](https://github.com/ARM-software/CMSIS_5)) are able to optimize not only the computation but also the memory fingerprint, allowing, when possible, to reuse temporal buffers, or perform in-place computations. Following these principles,
