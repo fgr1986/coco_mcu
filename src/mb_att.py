@@ -119,27 +119,27 @@ def simple_model(params, is_training):
                 name='masked_bneck_' + str(idx))([att_mask, bneck])
 
         # save the pooled output as a residual
-        if idx == 1:
-            bneck_res = tf.keras.layers.MaxPool2D(pool_size=(4, 4))(bneck)
+        # if idx == 1:
+        #     bneck_res = tf.keras.layers.MaxPool2D(pool_size=(4, 4))(bneck)
         # up scaling
-        if idx == penult_idx:
-            bneck = tf.keras.layers.UpSampling2D(size=(2, 2))(bneck)
-            cropped = ((1, 0), (1, 0))
-            bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
+        # if idx == penult_idx:
+        #     bneck = tf.keras.layers.UpSampling2D(size=(2, 2))(bneck)
+        #     cropped = ((1, 0), (1, 0))
+        #     bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
         # add residual
-        if idx == last_idx:
-            bneck_res = tf.keras.layers.UpSampling2D(size=(2,2))(bneck_res)
-            cropped = ((1,0),(1,0))
-            bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
-            bneck = tf.keras.layers.Add()([bneck, bneck_res])
+        # if idx == last_idx:
+        #     bneck_res = tf.keras.layers.UpSampling2D(size=(2,2))(bneck_res)
+        #     cropped = ((1,0),(1,0))
+        #     bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
+        #     bneck = tf.keras.layers.Add()([bneck, bneck_res])
     # Last stage
     # penultimate_channels = _make_divisible(
     #     576 * width_multiplier, divisible_by)
     # last_channels = _make_divisible(1280 * width_multiplier, divisible_by)
     penultimate_channels = 512
     last_channels = 1200
-    out_pool = tf.keras.layers.AveragePooling2D(pool_size=(4,4))(bneck)
-
+    # out_pool = tf.keras.layers.AveragePooling2D(pool_size=(4,4))(bneck)
+    out_pool = bneck
     if n_classes > 2 or not sigmoid_ish:
         last_stage = LastStage(
             penultimate_channels,
@@ -203,16 +203,16 @@ def do_nn(is_training,
             [3,  16,   16,  True,   "relu",    1,   False],
             [3,  16,   16,  True,   "relu",    1,   False],
             [3,  32,   24,  False,  "relu",    2,   False],
-            [3,  72,   32,  False,  "relu",    1,   False],
+            [3,  72,   32,  False,  "relu",    2,   False],
             [5, 256,  128,  True,   "hswish",  2,   False],
 
-            [5, 256,  128,  True,   "hswish",  1,   True],
+            [5, 256,  128,  True,   "hswish",  2,   True],
             [3, 256,  128,  True,   "hswish",  1,   True],
-            [3, 128,   64,  True,   "hswish",  1,   False],
-            [3,  64,   32,  False,  "relu",    1,   False],
+            # [3, 128,   64,  True,   "hswish",  1,   False],
+            # [3,  64,   32,  False,  "relu",    1,   False],
 
             # Up scaling
-            [3,  32,   16,  False,  "relu",    1,   False],
+            # [3,  32,   16,  False,  "relu",    1,   False],
         ],
         # 'width_multiplier': 0.7,  # 4b weights check!!
         # 'width_multiplier': 0.50,  # 8b weights check!!
@@ -399,6 +399,9 @@ if __name__ == "__main__":
                         help='indicates on which GPU the training is done')
     args = parser.parse_args()
 
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    tf.keras.backend.set_session(tf.Session(config=config))
     os.environ["CUDA_VISIBLE_DEVICES"] = args.GPU
     if args.train:
         do_nn(is_training=True,
