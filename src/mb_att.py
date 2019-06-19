@@ -119,27 +119,27 @@ def simple_model(params, is_training):
                 name='masked_bneck_' + str(idx))([att_mask, bneck])
 
         # save the pooled output as a residual
-        if idx == 1:
-            bneck_res = tf.keras.layers.MaxPool2D(pool_size=(4, 4))(bneck)
+        # if idx == 1:
+        #     bneck_res = tf.keras.layers.MaxPool2D(pool_size=(4, 4))(bneck)
         # up scaling
-        if idx == penult_idx:
-            bneck = tf.keras.layers.UpSampling2D(size=(2, 2))(bneck)
-            cropped = ((1, 0), (1, 0))
-            bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
+        # if idx == penult_idx:
+        #     bneck = tf.keras.layers.UpSampling2D(size=(2, 2))(bneck)
+        #     cropped = ((1, 0), (1, 0))
+        #     bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
         # add residual
-        if idx == last_idx:
-            bneck_res = tf.keras.layers.UpSampling2D(size=(2,2))(bneck_res)
-            cropped = ((1,0),(1,0))
-            bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
-            bneck = tf.keras.layers.Add()([bneck, bneck_res])
+        # if idx == last_idx:
+        #     bneck_res = tf.keras.layers.UpSampling2D(size=(2,2))(bneck_res)
+        #     cropped = ((1,0),(1,0))
+        #     bneck = tf.keras.layers.Cropping2D(cropping=cropped)(bneck)
+        #     bneck = tf.keras.layers.Add()([bneck, bneck_res])
     # Last stage
     # penultimate_channels = _make_divisible(
     #     576 * width_multiplier, divisible_by)
     # last_channels = _make_divisible(1280 * width_multiplier, divisible_by)
     penultimate_channels = 512
     last_channels = 1200
-    out_pool = tf.keras.layers.AveragePooling2D(pool_size=(4,4))(bneck)
-
+    # out_pool = tf.keras.layers.AveragePooling2D(pool_size=(4,4))(bneck)
+    out_pool = bneck
     if n_classes > 2 or not sigmoid_ish:
         last_stage = LastStage(
             penultimate_channels,
@@ -166,6 +166,7 @@ def simple_model(params, is_training):
 
 
 def do_nn(is_training,
+          is_miniVal=False,
           do_sigmoid_ish=False,
           exp_folder='default_tmp_folder',
           learning_rate=1e-3,
@@ -203,16 +204,16 @@ def do_nn(is_training,
             [3,  16,   16,  True,   "relu",    1,   False],
             [3,  16,   16,  True,   "relu",    1,   False],
             [3,  32,   24,  False,  "relu",    2,   False],
-            [3,  72,   32,  False,  "relu",    1,   False],
+            [3,  72,   32,  False,  "relu",    2,   False],
             [5, 256,  128,  True,   "hswish",  2,   False],
 
-            [5, 256,  128,  True,   "hswish",  1,   True],
+            [5, 256,  128,  True,   "hswish",  2,   True],
             [3, 256,  128,  True,   "hswish",  1,   True],
-            [3, 128,   64,  True,   "hswish",  1,   False],
-            [3,  64,   32,  False,  "relu",    1,   False],
+            # [3, 128,   64,  True,   "hswish",  1,   False],
+            # [3,  64,   32,  False,  "relu",    1,   False],
 
             # Up scaling
-            [3,  32,   16,  False,  "relu",    1,   False],
+            # [3,  32,   16,  False,  "relu",    1,   False],
         ],
         # 'width_multiplier': 0.7,  # 4b weights check!!
         # 'width_multiplier': 0.50,  # 8b weights check!!
@@ -222,6 +223,7 @@ def do_nn(is_training,
         'l2_reg': 1e-5,
 
     }
+
     encoded_one_hot = not do_sigmoid_ish
 
     if do_step_decay:
@@ -254,7 +256,7 @@ def do_nn(is_training,
     trn_batch_size = input_data.TRN_BATCH_SIZE
     val_batch_size = input_data.VAL_BATCH_SIZE
     trn_steps_per_epoch = input_data._SPLITS_TO_SIZES['trn'] // trn_batch_size
-    val_steps_per_epoch = input_data._SPLITS_TO_SIZES['val'] // val_batch_size
+    val_steps_per_epoch = input_data._SPLITS_TO_SIZES['mini_val' if is_miniVal else 'val'] // val_batch_size
 
     print('trn_steps_per_epoch: ', trn_steps_per_epoch)
     print('val_steps_per_epoch: ', val_steps_per_epoch)
@@ -264,10 +266,18 @@ def do_nn(is_training,
                       'do_one_hot': encoded_one_hot,
                       'repeat_epochs': trn_epochs}
 
-    val_input_fn = input_data.get_dataset
-    val_input_args = {'train': False,
-                      'do_one_hot': encoded_one_hot,
-                      'repeat_epochs': trn_epochs}
+    if is_miniVal:
+        val_input_fn = input_data.get_report_dataset
+        val_input_args = {
+            'minival_ids_path': './mscoco_minival_ids.txt',
+            'minival_json_path': './instances_visualwakewords_val2014.json',
+            'minival_img_folder_path': '/work/javfer01/coco/val2014/'
+        }
+    else:
+        val_input_fn = input_data.get_dataset
+        val_input_args = {'train': False,
+                        'do_one_hot': encoded_one_hot,
+                        'repeat_epochs': trn_epochs}
     if do_sigmoid_ish:
         metrics = ['binary_accuracy']
     else:
@@ -378,6 +388,9 @@ if __name__ == "__main__":
     parser.add_argument('--train', default=False,
                         action='store_true',
                         help='train model (otherwise test inputs)')
+    parser.add_argument('--eval_mini_val', default=False,
+                        action='store_true',
+                        help='loads model and evaluates on mini_val')
     parser.add_argument('--do_sigmoid_ish', default='False',
                         help='Sigmoid like or softmax approach',
                         type=input_data.str2bool)
@@ -400,27 +413,26 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.GPU
-    if args.train:
-        do_nn(is_training=True,
-              do_sigmoid_ish=args.do_sigmoid_ish,
-              learning_rate=args.learning_rate,
-              do_step_decay=args.do_step_decay,
-              do_exp_decay=args.exp_lr_decay,
-              exp_folder=args.exp_folder,
-              model_path=args.checkpoint_model_path,
-              num_epoch=args.epochs)
-    elif args.checkpoint_model_path:
+
+    session_config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
+    sess = tf.Session(config=session_config)
+
+    if args.checkpoint_model_path == "":
+        print('Starting model from scratch!')
+    else:
         print('restoring model from ', args.checkpoint_model_path)
-        pred = do_nn(
-            is_training=False,
+
+    if args.eval_mini_val:
+        print("Training is disabled when evaluating on the MiniVal")
+        args.train = False
+        
+    do_nn(is_training=args.train,
+            is_miniVal=args.eval_mini_val,
             do_sigmoid_ish=args.do_sigmoid_ish,
             learning_rate=args.learning_rate,
-            exp_folder=args.exp_folder,
             do_step_decay=args.do_step_decay,
-            model_path=args.checkpoint_model_path)
-    else:
-        # dataset_stats(False)
-        # dataset_stats(True,
-        #               exp_folder=args.exp_folder,
-        #               )
-        test_inputs()
+            do_exp_decay=args.exp_lr_decay,
+            exp_folder=args.exp_folder,
+            model_path=args.checkpoint_model_path,
+            num_epoch=args.epochs)
+
