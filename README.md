@@ -16,7 +16,7 @@ Following the instructions in [Visual Wake Words Challenge](https://docs.google.
 
 * Best Validation accuracy: 88.85%
 * Validation on minival_dataset: 87.96%
-* Model size: 244.4KB
+* Model size: 247.5KB
 * Peak memory usage: 249 KB
 * MACs for inference: 56.8 Million OPs
 
