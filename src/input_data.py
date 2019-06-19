@@ -46,7 +46,9 @@ IMG_SIZE = 256
 _SPLITS_TO_SIZES = {
     'trn': 82783,
     'val': 40504,
+    'mini_val': 8059
 }
+
 
 _ITEMS_TO_DESCRIPTIONS = {
     'image': 'A color image of varying height and width.',

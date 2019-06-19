@@ -166,6 +166,7 @@ def simple_model(params, is_training):
 
 
 def do_nn(is_training,
+          is_miniVal=False,
           do_sigmoid_ish=False,
           exp_folder='default_tmp_folder',
           learning_rate=1e-3,
@@ -222,6 +223,7 @@ def do_nn(is_training,
         'l2_reg': 1e-5,
 
     }
+
     encoded_one_hot = not do_sigmoid_ish
 
     if do_step_decay:
@@ -254,7 +256,7 @@ def do_nn(is_training,
     trn_batch_size = input_data.TRN_BATCH_SIZE
     val_batch_size = input_data.VAL_BATCH_SIZE
     trn_steps_per_epoch = input_data._SPLITS_TO_SIZES['trn'] // trn_batch_size
-    val_steps_per_epoch = input_data._SPLITS_TO_SIZES['val'] // val_batch_size
+    val_steps_per_epoch = input_data._SPLITS_TO_SIZES['mini_val' if is_miniVal else 'val'] // val_batch_size
 
     print('trn_steps_per_epoch: ', trn_steps_per_epoch)
     print('val_steps_per_epoch: ', val_steps_per_epoch)
@@ -264,10 +266,18 @@ def do_nn(is_training,
                       'do_one_hot': encoded_one_hot,
                       'repeat_epochs': trn_epochs}
 
-    val_input_fn = input_data.get_dataset
-    val_input_args = {'train': False,
-                      'do_one_hot': encoded_one_hot,
-                      'repeat_epochs': trn_epochs}
+    if is_miniVal:
+        val_input_fn = input_data.get_report_dataset
+        val_input_args = {
+            'minival_ids_path': './mscoco_minival_ids.txt',
+            'minival_json_path': './instances_visualwakewords_val2014.json',
+            'minival_img_folder_path': '/work/javfer01/coco/val2014/'
+        }
+    else:
+        val_input_fn = input_data.get_dataset
+        val_input_args = {'train': False,
+                        'do_one_hot': encoded_one_hot,
+                        'repeat_epochs': trn_epochs}
     if do_sigmoid_ish:
         metrics = ['binary_accuracy']
     else:
@@ -378,6 +388,9 @@ if __name__ == "__main__":
     parser.add_argument('--train', default=False,
                         action='store_true',
                         help='train model (otherwise test inputs)')
+    parser.add_argument('--eval_mini_val', default=False,
+                        action='store_true',
+                        help='loads model and evaluates on mini_val')
     parser.add_argument('--do_sigmoid_ish', default='False',
                         help='Sigmoid like or softmax approach',
                         type=input_data.str2bool)
@@ -399,31 +412,25 @@ if __name__ == "__main__":
                         help='indicates on which GPU the training is done')
     args = parser.parse_args()
 
-    config = tf.ConfigProto()
-    config.gpu_options.allow_growth = True
-    tf.keras.backend.set_session(tf.Session(config=config))
     os.environ["CUDA_VISIBLE_DEVICES"] = args.GPU
-    if args.train:
-        do_nn(is_training=True,
-              do_sigmoid_ish=args.do_sigmoid_ish,
-              learning_rate=args.learning_rate,
-              do_step_decay=args.do_step_decay,
-              do_exp_decay=args.exp_lr_decay,
-              exp_folder=args.exp_folder,
-              model_path=args.checkpoint_model_path,
-              num_epoch=args.epochs)
-    elif args.checkpoint_model_path:
+
+
+    if args.checkpoint_model_path == "":
+        print('Starting model from scratch!')
+    else:
         print('restoring model from ', args.checkpoint_model_path)
-        pred = do_nn(
-            is_training=False,
+
+    if args.eval_mini_val:
+        print("Training is disabled when evaluating on the MiniVal")
+        args.train = False
+        
+    do_nn(is_training=args.train,
+            is_miniVal=args.eval_mini_val,
             do_sigmoid_ish=args.do_sigmoid_ish,
             learning_rate=args.learning_rate,
-            exp_folder=args.exp_folder,
             do_step_decay=args.do_step_decay,
-            model_path=args.checkpoint_model_path)
-    else:
-        # dataset_stats(False)
-        # dataset_stats(True,
-        #               exp_folder=args.exp_folder,
-        #               )
-        test_inputs()
+            do_exp_decay=args.exp_lr_decay,
+            exp_folder=args.exp_folder,
+            model_path=args.checkpoint_model_path,
+            num_epoch=args.epochs)
+
