@@ -298,7 +298,7 @@ def evaluate_clean(inference_model_fn,
         model_clean.compile(optimizer=o,  # 'adam',
                             loss=l,
                             metrics=metrics)
-        model.summary()
+        model_clean.summary()
         # recover the model
         saver = tf.train.Saver()
         saver.restore(session, model_path)
