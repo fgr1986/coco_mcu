@@ -414,6 +414,8 @@ if __name__ == "__main__":
 
     os.environ["CUDA_VISIBLE_DEVICES"] = args.GPU
 
+    session_config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
+    sess = tf.Session(config=session_config)
 
     if args.checkpoint_model_path == "":
         print('Starting model from scratch!')
